@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão de Feedback - Hiperpersonalização de Marketing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 500px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #e7f3e7;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enviar Dados para Previsão</h2>
+        <form id="dataForm">
+            <input type="text" id="setor" class="input-field" placeholder="Setor (ex: Tecnologia)" required>
+            <input type="number" id="numero_funcionarios" class="input-field" placeholder="Número de Funcionários" required>
+            <input type="number" id="faturamento_anual" class="input-field" placeholder="Faturamento Anual" required>
+            <input type="number" id="receita_anual" class="input-field" placeholder="Receita Anual" required>
+            <input type="number" id="crescimento_anual" class="input-field" placeholder="Crescimento Anual (%)" required>
+            <button type="button" class="button" onclick="enviarDados()">Enviar para Previsão</button>
+        </form>
+        <div id="resultado" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function enviarDados() {
+            // Coleta os dados do formulário
+            const dados = {
+                setor: document.getElementById('setor').value,
+                numero_funcionarios: parseInt(document.getElementById('numero_funcionarios').value),
+                faturamento_anual: parseInt(document.getElementById('faturamento_anual').value),
+                receita_anual: parseInt(document.getElementById('receita_anual').value),
+                crescimento_anual: parseFloat(document.getElementById('crescimento_anual').value),
+            };
+
+            try {
+                // Envia os dados para a API
+                const resposta = await fetch("http://localhost:5000/prever", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                // Recebe e trata a resposta da API
+                const resultado = await resposta.json();
+                
+                // Exibe o resultado na interface
+                console.log("Exibindo Resultado!")
+                document.getElementById("resultado").style.display = "block";
+                document.getElementById("resultado").innerText = `Previsão: ${resultado.previsao}`;
+            } catch (erro) {
+                console.error("Erro ao enviar os dados:", erro);
+                document.getElementById("resultado").style.display = "block";
+                document.getElementById("resultado").innerText = "Erro ao enviar os dados para a API.";
+            }
+        }
+    </script>
+</body>
+</html>
